@@ -5,8 +5,8 @@ import App from './app'
 import validateEnv from './utils/validateEnv'
 
 /* Routes */
-import IndexRoute from './routes/index.route'
-import TrustAnchorRoute from './routes/trustAnchor.route'
+// import IndexRoute from './routes/index.route'
+// import TrustAnchorRoute from './routes/trustAnchor.route'
 
 const routes = [] // [new IndexRoute(), new TrustAnchorRoute()]
 

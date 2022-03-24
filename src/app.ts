@@ -17,8 +17,7 @@ import errorMiddleware from './middlewares/error.middleware'
 import { logger, stream } from './utils/logger'
 import { version, name, description } from '../package.json'
 import TrustAnchorListService from './services/trustAnchorList.service'
-import { fetchBlocks } from './utils/fetchBlocks'
-import { getEvents } from './utils/fetchCreateTokenEvents'
+import { queryTestnet } from './utils/queryTestnet'
 
 class App {
   public app: express.Application
@@ -142,7 +141,6 @@ class App {
   // }
 }
 
-fetchBlocks()
-getEvents()
+queryTestnet()
 
 export default App

@@ -3,8 +3,10 @@ const gaiaxUrl = 'https://rpc.gaiaxtestnet.oceanprotocol.com:443'
 const provider = new ethers.providers.JsonRpcProvider(gaiaxUrl)
 const { abi, contractAddress } = require('./dtfactory.json')
 import CreateTokenEvent from '../models/createTokenEvent.model'
+import Block from '../models/block.model'
 
 export async function getEvents() {
+  console.log('==== Start event import... ====')
   const contract = new ethers.Contract(contractAddress, abi, provider)
 
   const filter = 'TokenCreated'
@@ -14,14 +16,15 @@ export async function getEvents() {
 
   const cleanedEvents = []
   for (const event of events) {
+    const eventBlock = await Block.findOne({ blockNumber: event.blockNumber })
     cleanedEvents.push({
       blockNumber: event.blockNumber,
-      unixTimestamp: 1648149680,
-      timestamp: 1648149680,
+      unixTimestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890,
+      timestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890,
       transactionHash: event.transactionHash
     })
   }
 
   const result = await CreateTokenEvent.insertMany(cleanedEvents)
-  console.log('Finished event import')
+  console.log('==== Finished event import ====')
 }
