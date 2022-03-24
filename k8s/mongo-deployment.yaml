@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - image: mongo
+          name: mongo
+          securityContext:
+          ports:
+            - containerPort: 27017
+      restartPolicy: Always
+      runAsNonRoot: true
+      runAsUser: 999
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongo
+spec:
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: mongo-port
+  selector:
+    app: mongo

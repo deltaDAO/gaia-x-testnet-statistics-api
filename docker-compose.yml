@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongoDB
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+  server:
+    build:
+      context: ./
+      target: development-build-stage
+      dockerfile: Dockerfile.dev
+    container_name: serverTest
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/app
+    restart: 'unless-stopped'
+    depends_on:
+      - mongo
+
+volumes:
+  data:
+    driver: local

@@ -1,0 +1,14 @@
+{
+  "definedTrustAnchorLists": [
+    {
+      "name": "eiDAS",
+      "uri": "https://ec.europa.eu/tools/lotl/eu-lotl.xml",
+      "parserClass": "eiDASParser"
+    },
+    {
+      "name": "DV SSL",
+      "uri": "https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReportPEMCSV",
+      "parserClass": "mozillaParser"
+    }
+  ]
+}

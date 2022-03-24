@@ -1,0 +1,68 @@
+tags:
+  - name: Trust Anchor
+    description: Endpoints to interact with registered trust anchors
+components:
+  schemas:
+    TrustAnchorRequestBody:
+      type: object
+      properties:
+        publicKey:
+          type: string
+          example: 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
+    TrustAnchorResponseTrustedForAttributesProp:
+      type: pattern
+      example: /.*/gm
+      description: For a list of all attributes, see the [Trust Framework](https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/)
+    TrustAnchorResponseTrustedAtProp:
+      type: integer
+      format: int64
+      example: 1645817070
+      description: UNIX timestamp of the time of last trust
+
+paths:
+  /api/trustAnchor:
+    # [POST] Find Trust Anchor
+    post:
+      tags:
+        - Trust Anchor
+      summary: Look for a given Trust Anchor public key in the registry.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustAnchorRequestBody'
+      responses:
+        200:
+          description: Found a Trust Anchor for the public key in the registry
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trustState:
+                    type: string
+                    enum: ['trusted', 'untrusted']
+                  trustedForAttributes:
+                    $ref: '#/components/schemas/TrustAnchorResponseTrustedForAttributesProp'
+                  trustedAt:
+                    $ref: '#/components/schemas/TrustAnchorResponseTrustedAtProp'
+        409:
+          description: Could not find a Trust Anchor for the given public key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Trust Anchor not found.
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request body invalid.

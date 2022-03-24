@@ -1,0 +1,6 @@
+{
+  "watch": ["src", ".env", "swagger.yml"],
+  "ext": "js,ts,json",
+  "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+  "exec": "cp swagger.yml dist/swagger.yml && ts-node --transpile-only src/server.ts"
+}

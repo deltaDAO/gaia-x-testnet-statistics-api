@@ -1,0 +1,13 @@
+FROM node:16 as development-build-stage
+
+WORKDIR /usr/src/app
+
+EXPOSE 3000
+
+ENV NODE_ENV development
+
+COPY . /usr/src/app
+
+RUN npm install
+
+CMD ["npm", "run", "dev"]
