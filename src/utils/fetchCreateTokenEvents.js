@@ -23,5 +23,5 @@ export async function getEvents() {
   }
 
   const result = await CreateTokenEvent.insertMany(cleanedEvents)
-  console.log('Finished event import', result)
+  console.log('Finished event import')
 }
