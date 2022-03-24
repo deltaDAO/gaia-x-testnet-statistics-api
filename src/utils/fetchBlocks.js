@@ -16,7 +16,7 @@ export async function fetchBlocks() {
   //const accountSet = new Set()
   const blockArray = []
   const blockNumberStart = 3175588 // December-02-2021 09:30:00 AM +1 UTC
-  const blockNumberEnd = 3175610 // 3184397 // December-02-2021 09:44:05 PM +1 UTC
+  const blockNumberEnd = 'latest' // 3184397 // December-02-2021 09:44:05 PM +1 UTC
 
   for (let currentBlockNumber = blockNumberStart; currentBlockNumber < blockNumberEnd; currentBlockNumber++) {
     const newBlock = await getBlock(currentBlockNumber)
