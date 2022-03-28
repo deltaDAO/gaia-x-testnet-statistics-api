@@ -131,14 +131,6 @@ class App {
   private initializeErrorHandling() {
     this.app.use(errorMiddleware)
   }
-
-  // private async initializeTrustAnchors() {
-  //   const talService = new TrustAnchorListService()
-
-  //   const updated = await talService.fetchAllTrustAnchorLists()
-
-  //   logger.info(`[TrustAnchors] Fetched from ${talService.parentLists.length} parent lists and updated ${updated} trust anchors.`)
-  // }
 }
 
 queryTestnet()
