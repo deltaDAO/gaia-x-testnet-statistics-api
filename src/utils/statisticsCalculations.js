@@ -3,7 +3,7 @@ import CreateTokenEvent from '../models/createTokenEvent.model'
 import Statistic from '../models/statistic.model'
 import Transaction from '../models/transaction.model'
 import _ from 'lodash'
-import { format } from 'date-fns'
+import { format, getWeek } from 'date-fns'
 
 async function getTotalWalletAddresses() {
   const accountSet = new Set()
@@ -15,7 +15,7 @@ async function getTotalWalletAddresses() {
   return accountSet.size
 }
 
-async function getTotalTransactionsChartData() {
+async function getTotalTransactionsChartData(groupBy) {
   const queryDate = new Date()
   const oneYearAgo = queryDate.getDate() - 365 // 365 days in the past
   queryDate.setDate(oneYearAgo)
@@ -23,7 +23,15 @@ async function getTotalTransactionsChartData() {
 
   const lastYearTransactions = await Transaction.find({ timestamp: { $gte: queryDate } }).exec()
 
-  const groupedBySelection = _.groupBy(lastYearTransactions, tx => format(new Date(tx.unixTimestamp * 1000), 'dd.MM.yyyy'))
+  const groupedBySelection = _.groupBy(lastYearTransactions, tx => {
+    return groupBy === 'month'
+      ? format(new Date(tx.unixTimestamp * 1000), 'MM.yyyy')
+      : groupBy === 'week'
+      ? `${getWeek(new Date(tx.unixTimestamp * 1000), {
+          weekStartsOn: 1
+        })}.${format(new Date(tx.unixTimestamp * 1000), 'yyyy')}`
+      : format(new Date(tx.unixTimestamp * 1000), 'dd.MM.yyyy')
+  })
 
   const timeStamps = Object.keys(groupedBySelection)
   const overallValues = Object.values(groupedBySelection).map(group => group.reduce((pv, cv) => (pv += 1), 0))
@@ -39,7 +47,10 @@ export async function calculateStatistics() {
   const totalWalletAddresses = await getTotalWalletAddresses(blocksWithTransactions)
   const totalAssets = await CreateTokenEvent.countDocuments({})
 
-  const totalTransactionsChartData = await getTotalTransactionsChartData()
+  const totalTransactionsChartData = {}
+  totalTransactionsChartData.groupedByDay = await getTotalTransactionsChartData()
+  totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
+  totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
 
   //console.log(totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData)
 
