@@ -19,7 +19,8 @@ const createTokenEventSchema: Schema = new Schema(
     },
     transactionHash: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     }
   },
   {

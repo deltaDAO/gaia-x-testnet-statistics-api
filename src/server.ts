@@ -5,10 +5,10 @@ import App from './app'
 import validateEnv from './utils/validateEnv'
 
 /* Routes */
-// import IndexRoute from './routes/index.route'
-// import TrustAnchorRoute from './routes/trustAnchor.route'
+import IndexRoute from './routes/index.route'
+import StatisticRoute from './routes/statistic.route'
 
-const routes = [] // [new IndexRoute(), new TrustAnchorRoute()]
+const routes = [new IndexRoute(), new StatisticRoute()]
 
 validateEnv()
 

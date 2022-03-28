@@ -53,7 +53,7 @@ class App {
 
   private connectToDatabase() {
     if (this.env !== 'production') {
-      set('debug', true)
+      //set('debug', true)
     }
     logger.info(`[Mongoose] trying to connect at ${dbConnection.url} with:`)
     connect(dbConnection.url, dbConnection.options)
