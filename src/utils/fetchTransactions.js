@@ -22,13 +22,8 @@ export async function fetchTransactions() {
   for (const block of blocksWithTransactions) {
     for (let index = 0; index < block.transactionHashes.length; index++) {
       const txHash = block.transactionHashes[index]
-      const transactionExists = await Transaction.exists({ hash: txHash })
-      if (transactionExists) {
-        console.log('ignored - already in DB', block.transactionHashes[index], block.blockNumber)
-        continue
-      }
       const transaction = await provider.getTransaction(txHash)
-      console.log(transaction.hash, transaction.blockNumber)
+      console.log('Fetch Transaction:', transaction.hash, 'Block:', transaction.blockNumber)
       await Transaction.create({
         hash: transaction.hash,
         blockNumber: transaction.blockNumber,
