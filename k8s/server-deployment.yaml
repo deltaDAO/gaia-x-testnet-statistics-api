@@ -27,13 +27,11 @@ spec:
           ports:
             - containerPort: 3000
               name: http-api
-      runAsNonRoot: true
-      runAsUser: 1000
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: server
+  name: gx-testnet-statistics-api
 spec:
   ports:
     - name: http
@@ -46,7 +44,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: server
+  name: gx-testnet-statistics-api
   annotations:
     kubernetes.io/ingress.class: 'nginx'
     cert-manager.io/cluster-issuer: letsencrypt-prod
