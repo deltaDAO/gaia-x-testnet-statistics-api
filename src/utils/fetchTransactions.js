@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
 
-const providerURL = 'http://localhost:8545' // `https://rpc.gaiaxtestnet.oceanprotocol.com` // or use your local node 'http://localhost:8545'
+const providerURL = `https://rpc.gaiaxtestnet.oceanprotocol.com` // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
 async function getLatestTransactionBlock() {
