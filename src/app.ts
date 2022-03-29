@@ -132,6 +132,6 @@ class App {
   }
 }
 
-queryTestnet()
+// queryTestnet()
 
 export default App
