@@ -1,12 +1,12 @@
-# Gaia-X Lab Registry
+# block-history-visualization-api
 
 ## Getting started
 
 Clone the repository and jump into the newly created directory:
 
 ```sh
-git clone https://gitlab.com/gaia-x/lab/compliance/gx-registry.git
-cd gx-registry
+git clone git@github.com:deltaDAO/gaia-x-testnet-statistics-api.git
+cd gaia-x-testnet-statistics-api
 ```
 
 Next we need to take care of the initial setup of the project:
