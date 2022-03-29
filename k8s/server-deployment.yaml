@@ -23,6 +23,7 @@ spec:
             - name: MONGO_PORT
               value: '27017'
           image: deltadao/gaia-x-testnet-statistics-api:main
+          imagePullPolicy: Always
           name: gx-testnet-statistics-api
           ports:
             - containerPort: 3000
