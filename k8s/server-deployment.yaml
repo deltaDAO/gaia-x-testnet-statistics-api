@@ -22,7 +22,7 @@ spec:
               value: mongo
             - name: MONGO_PORT
               value: '27017'
-          image: deltadao/gaia-x-testnet-statistics-api:latest
+          image: deltadao/gaia-x-testnet-statistics-api:main
           name: gx-testnet-statistics-api
           ports:
             - containerPort: 3000
