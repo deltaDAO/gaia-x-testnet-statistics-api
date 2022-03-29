@@ -51,16 +51,16 @@ metadata:
 spec:
   tls:
     - hosts:
-        - api.stats.minimal-gaia-x.eu
-      secretName: server-tls-secret
+        - api.gx-stats.delta-dao.com
+      secretName: gx-testnet-statistics-api-tls-secret
   rules:
-    - host: api.stats.minimal-gaia-x.eu
+    - host: api.gx-stats.delta-dao.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: server
+                name: gx-testnet-statistics-api
                 port:
                   number: 80
