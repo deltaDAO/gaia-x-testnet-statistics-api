@@ -4,6 +4,7 @@ import { calculateStatistics } from './statisticsCalculations'
 import { fetchTransactions } from './fetchTransactions'
 
 export async function queryTestnet() {
+  await calculateStatistics()
   await fetchBlocks()
   await getEvents()
   await fetchTransactions()
