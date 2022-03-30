@@ -22,7 +22,7 @@
     "csv-parse": "^5.0.4",
     "date-fns": "^2.28.0",
     "dotenv": "^10.0.0",
-    "envalid": "^7.1.0",
+    "envalid": "^7.3.0",
     "ethers": "^5.6.1",
     "express": "^4.17.1",
     "fast-xml-parser": "^4.0.3",
