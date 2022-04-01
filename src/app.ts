@@ -16,7 +16,7 @@ import { Routes } from './interfaces/routes.interface'
 import errorMiddleware from './middlewares/error.middleware'
 import { logger, stream } from './utils/logger'
 import { version, name, description } from '../package.json'
-import { queryTestnet } from './utils/queryTestnet'
+import { startCronJobs } from './utils/cronJobs'
 
 class App {
   public app: express.Application
@@ -131,7 +131,6 @@ class App {
     this.app.use(errorMiddleware)
   }
 }
-
-queryTestnet()
+startCronJobs()
 
 export default App
