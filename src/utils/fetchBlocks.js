@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import Block from '../models/block.model'
 import fetch from 'node-fetch'
 
-const providerURL = `https://rpc.gaiaxtestnet.oceanprotocol.com` // or use your local node 'http://localhost:8545'
+const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
 function getLatestBlockNumber() {
@@ -37,45 +37,40 @@ function getBlock(blockNumber) {
 }
 
 export async function fetchBlocks() {
-  console.log('==== Start Block import... ====')
+  console.log('==== Start Block import ====')
+  try {
+    const bundleSize = 10000
+    const latestBlockInDb = await getLatestBlockNumberFromDb()
+    const lastBlock = await getLatestBlockNumber()
+    console.log(`Latest Block in DB: ${latestBlockInDb} Lastest Block: ${lastBlock}`)
+    let blockArray = []
+    let blockNumberStart = latestBlockInDb ? latestBlockInDb + 1 : 0 // 802681 is the first event Block;  3175588 December-02-2021 09:30:00 AM +1 UTC
+    let blockNumberEnd = blockNumberStart + bundleSize // 5026729 2022-03-24 22:26:00 +1 UTC
 
-  const bundleSize = 10000
-  const latestBlockInDb = await getLatestBlockNumberFromDb()
-  const lastBlock = await getLatestBlockNumber()
-  console.log(`Latest Block in DB: ${latestBlockInDb} Lastest Block: ${lastBlock}`)
-  let blockArray = []
-  let blockNumberStart = latestBlockInDb ? latestBlockInDb + 1 : 0 // 802681 is the first event Block;  3175588 December-02-2021 09:30:00 AM +1 UTC
-  let blockNumberEnd = blockNumberStart + bundleSize // 5026729 2022-03-24 22:26:00 +1 UTC
-
-  for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlock; currentBlockNumber++) {
-    if (currentBlockNumber > blockNumberEnd) {
-      await Block.insertMany(blockArray)
-      blockArray = []
-      blockNumberStart = blockNumberStart + bundleSize
-      if (blockNumberEnd + bundleSize > lastBlock) {
-        blockNumberEnd = lastBlock
-      } else {
-        blockNumberEnd = blockNumberEnd + bundleSize
+    for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlock; currentBlockNumber++) {
+      if (currentBlockNumber > blockNumberEnd) {
+        await Block.insertMany(blockArray)
+        blockArray = []
+        blockNumberStart = blockNumberStart + bundleSize
+        if (blockNumberEnd + bundleSize > lastBlock) {
+          blockNumberEnd = lastBlock
+        } else {
+          blockNumberEnd = blockNumberEnd + bundleSize
+        }
       }
+
+      const newBlock = await getBlock(currentBlockNumber)
+      console.log(`Fetch Block: ${newBlock.number}`)
+      blockArray.push({
+        blockNumber: newBlock.number,
+        unixTimestamp: newBlock.timestamp,
+        timestamp: newBlock.timestamp,
+        transactionHashes: newBlock.transactions
+      })
     }
-
-    const newBlock = await getBlock(currentBlockNumber)
-    console.log(`Fetch Block: ${newBlock.number}`)
-    blockArray.push({
-      blockNumber: newBlock.number,
-      unixTimestamp: newBlock.timestamp,
-      timestamp: newBlock.timestamp,
-      transactionHashes: newBlock.transactions
-    })
-
-    // for (let index = 0; index < transactions.length; index++) {
-    //   let txHash = transactions[index]
-    //   let { from, to } = await getTransaction(txHash)
-    //   console.log(`${currentBlockNumber}/${blockNumberEnd}: ${from} ${to}`)
-    //   accountSet.add(from)
-    //   accountSet.add(to)
-    // }
+    await Block.insertMany(blockArray)
+  } catch (error) {
+    console.log(error)
   }
-  await Block.insertMany(blockArray)
-  console.log(' ==== Finished Block import ====')
+  console.log('==== Finished Block import ====')
 }
