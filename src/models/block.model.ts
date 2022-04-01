@@ -1,4 +1,4 @@
-import { Document, model, Types, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
 
 import { Block } from '../interfaces/block.interface'
 

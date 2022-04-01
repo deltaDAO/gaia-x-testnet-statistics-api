@@ -11,7 +11,7 @@ async function getLatestEventBlockNumberFromDb() {
 }
 
 export async function getEvents() {
-  console.log('==== Start event import... ====')
+  console.log('==== Start event import ====')
   const contract = new ethers.Contract(contractAddress, abi, provider)
 
   const filter = 'TokenCreated'
@@ -44,6 +44,6 @@ export async function getEvents() {
     })
   }
 
-  const result = await CreateTokenEvent.insertMany(cleanedEvents)
+  await CreateTokenEvent.insertMany(cleanedEvents)
   console.log('==== Finished event import ====')
 }

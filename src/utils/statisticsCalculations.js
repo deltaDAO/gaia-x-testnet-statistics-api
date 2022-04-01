@@ -40,6 +40,7 @@ async function getTotalTransactionsChartData(groupBy) {
 }
 
 export async function calculateStatistics() {
+  console.log('==== start building statistics ====')
   const blocksWithTransactions = await Block.find({ transactionHashes: { $exists: true, $not: { $size: 0 } } })
   const totalBlocks = await Block.countDocuments({})
 
@@ -55,4 +56,5 @@ export async function calculateStatistics() {
   //console.log(totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData)
 
   Statistic.create({ totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData })
+  console.log('==== finished building statistics ====')
 }
