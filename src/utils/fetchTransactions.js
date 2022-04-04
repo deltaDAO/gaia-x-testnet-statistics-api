@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
+import { logger } from './logger'
 
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
@@ -11,7 +12,7 @@ async function getLatestTransactionBlock() {
 }
 
 export async function fetchTransactions() {
-  console.log('==== Start Transaction import ====')
+  logger.info('==== Start Transaction import ====')
   try {
     const blockQuery = { transactionHashes: { $exists: true, $not: { $size: 0 } } }
     const lastTxBlockNumber = await getLatestTransactionBlock()
@@ -24,7 +25,7 @@ export async function fetchTransactions() {
       for (let index = 0; index < block.transactionHashes.length; index++) {
         const txHash = block.transactionHashes[index]
         const transaction = await provider.getTransaction(txHash)
-        console.log('Fetch Transaction:', transaction.hash, 'Block:', transaction.blockNumber)
+        logger.info('Fetch Transaction:', transaction.hash, 'Block:', transaction.blockNumber)
         await Transaction.create({
           hash: transaction.hash,
           blockNumber: transaction.blockNumber,
@@ -36,7 +37,7 @@ export async function fetchTransactions() {
       }
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
   }
-  console.log('==== Finished Transaction import ====')
+  logger.info('==== Finished Transaction import ====')
 }

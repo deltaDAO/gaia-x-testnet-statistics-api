@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import Block from '../models/block.model'
 import fetch from 'node-fetch'
+import { logger } from './logger'
 
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
@@ -37,15 +38,15 @@ function getBlock(blockNumber) {
 }
 
 export async function fetchBlocks() {
-  console.log('==== Start Block import ====')
+  logger.info('==== Start Block import ====')
   try {
     const bundleSize = 10000
-    const latestBlockInDb = await getLatestBlockNumberFromDb()
+    const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
     const lastBlock = await getLatestBlockNumber()
-    console.log(`Latest Block in DB: ${latestBlockInDb} Lastest Block: ${lastBlock}`)
+    logger.info(`Latest Block in DB: ${latestBlockNumberInDb} Lastest Block: ${lastBlock}`)
     let blockArray = []
-    let blockNumberStart = latestBlockInDb ? latestBlockInDb + 1 : 0 // 802681 is the first event Block;  3175588 December-02-2021 09:30:00 AM +1 UTC
-    let blockNumberEnd = blockNumberStart + bundleSize // 5026729 2022-03-24 22:26:00 +1 UTC
+    let blockNumberStart = latestBlockNumberInDb ? latestBlockNumberInDb + 1 : 0
+    let blockNumberEnd = blockNumberStart + bundleSize
 
     for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlock; currentBlockNumber++) {
       if (currentBlockNumber > blockNumberEnd) {
@@ -60,7 +61,7 @@ export async function fetchBlocks() {
       }
 
       const newBlock = await getBlock(currentBlockNumber)
-      console.log(`Fetch Block: ${newBlock.number}`)
+      logger.info(`Fetch Block: ${newBlock.number}`)
       blockArray.push({
         blockNumber: newBlock.number,
         unixTimestamp: newBlock.timestamp,
@@ -70,7 +71,7 @@ export async function fetchBlocks() {
     }
     await Block.insertMany(blockArray)
   } catch (error) {
-    console.log(error)
+    logger.error(error)
   }
-  console.log('==== Finished Block import ====')
+  logger.info('==== Finished Block import ====')
 }

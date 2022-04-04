@@ -1,5 +1,6 @@
 import * as cron from 'node-cron'
 import { queryTestnet } from './queryTestnet'
+import { logger } from './logger'
 
 export async function startCronJobs() {
   /**
@@ -10,7 +11,7 @@ export async function startCronJobs() {
    * Lock printStatus updates and emit status to send shipping confirmation
    */
   cron.schedule('0,15,30,45 * * * *', () => {
-    console.log('==== start queryTestnet (cron) ====')
+    logger.info('==== start queryTestnet (cron) ====')
     queryTestnet()
   })
 }

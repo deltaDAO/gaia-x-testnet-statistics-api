@@ -4,6 +4,7 @@ const provider = new ethers.providers.JsonRpcProvider(gaiaxUrl)
 const { abi, contractAddress } = require('./dtfactory.json')
 import CreateTokenEvent from '../models/createTokenEvent.model'
 import Block from '../models/block.model'
+import { logger } from './logger'
 
 async function getLatestEventBlockNumberFromDb() {
   const eventArray = await CreateTokenEvent.find({}).sort('-blockNumber').limit(1).exec()
@@ -11,7 +12,7 @@ async function getLatestEventBlockNumberFromDb() {
 }
 
 export async function getEvents() {
-  console.log('==== Start event import ====')
+  logger.info('==== Start event import ====')
   const contract = new ethers.Contract(contractAddress, abi, provider)
 
   const filter = 'TokenCreated'
@@ -45,5 +46,5 @@ export async function getEvents() {
   }
 
   await CreateTokenEvent.insertMany(cleanedEvents)
-  console.log('==== Finished event import ====')
+  logger.info('==== Finished event import ====')
 }
