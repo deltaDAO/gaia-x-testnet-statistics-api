@@ -42,22 +42,22 @@ export async function fetchBlocks() {
   try {
     const bundleSize = 10000
     const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
-    const lastBlock = await getLatestBlockNumber()
-    logger.info(`Latest Block in DB: ${latestBlockNumberInDb} Lastest Block: ${lastBlock}`)
+    const lastBlockNumber = await getLatestBlockNumber()
+
+    logger.info(`Latest Block in DB: ${latestBlockNumberInDb} Lastest Block: ${lastBlockNumber}`)
+
     let blockArray = []
     let blockNumberStart = latestBlockNumberInDb ? latestBlockNumberInDb + 1 : 0
     let blockNumberEnd = blockNumberStart + bundleSize
 
-    for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlock; currentBlockNumber++) {
+    for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlockNumber; currentBlockNumber++) {
       if (currentBlockNumber > blockNumberEnd) {
+        const newBlockNumberEnd = blockNumberEnd + bundleSize
         await Block.insertMany(blockArray)
         blockArray = []
+
         blockNumberStart = blockNumberStart + bundleSize
-        if (blockNumberEnd + bundleSize > lastBlock) {
-          blockNumberEnd = lastBlock
-        } else {
-          blockNumberEnd = blockNumberEnd + bundleSize
-        }
+        blockNumberEnd = newBlockNumberEnd > lastBlockNumber ? lastBlockNumber : newBlockNumberEnd
       }
 
       const newBlock = await getBlock(currentBlockNumber)
