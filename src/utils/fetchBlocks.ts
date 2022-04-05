@@ -37,7 +37,7 @@ function getBlock(blockNumber) {
   return provider.getBlock(blockNumber)
 }
 
-export async function fetchBlocks(bundleSize = 10000) {
+export async function fetchBlocks(bundleSize: number) {
   logger.info('==== Start Block import ====')
   try {
     const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
@@ -47,7 +47,7 @@ export async function fetchBlocks(bundleSize = 10000) {
 
     let blockArray = []
     let blockNumberStart = latestBlockNumberInDb ? latestBlockNumberInDb + 1 : 0
-    let blockNumberEnd = blockNumberStart + bundleSize
+    let blockNumberEnd = blockNumberStart + bundleSize - 1
 
     for (let currentBlockNumber = blockNumberStart; currentBlockNumber < lastBlockNumber; currentBlockNumber++) {
       if (currentBlockNumber > blockNumberEnd) {
