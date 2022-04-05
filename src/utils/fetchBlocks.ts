@@ -53,6 +53,7 @@ export async function fetchBlocks(bundleSize = 10000) {
       if (currentBlockNumber > blockNumberEnd) {
         const newBlockNumberEnd = blockNumberEnd + bundleSize
         await Block.insertMany(blockArray)
+        logger.info(`blocks saved to DB (bundle size: ${bundleSize})`)
         blockArray = []
 
         blockNumberStart = blockNumberStart + bundleSize
@@ -73,6 +74,7 @@ export async function fetchBlocks(bundleSize = 10000) {
       })
     }
     await Block.insertMany(blockArray)
+    logger.info(`blocks saved to DB (bundle size: ${bundleSize})`)
   } catch (error) {
     logger.error(error)
   }
