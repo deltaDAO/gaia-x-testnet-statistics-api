@@ -61,12 +61,16 @@ export async function fetchBlocks() {
       }
 
       const newBlock = await getBlock(currentBlockNumber)
-      logger.info(`Fetch Block: ${newBlock.number}`)
+
+      const { number, timestamp, transactions }: { number: number; timestamp: number; transactions: string[] } = newBlock
+
+      logger.info(`Fetch Block: ${number}`)
+
       blockArray.push({
-        blockNumber: newBlock.number,
-        unixTimestamp: newBlock.timestamp,
-        timestamp: newBlock.timestamp,
-        transactionHashes: newBlock.transactions
+        blockNumber: number,
+        unixTimestamp: timestamp,
+        timestamp: timestamp,
+        transactionHashes: transactions
       })
     }
     await Block.insertMany(blockArray)
