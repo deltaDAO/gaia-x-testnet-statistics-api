@@ -6,7 +6,7 @@ import { logger } from './logger'
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
-async function getLatestTransactionBlock() {
+async function getLatestTxBlockNumber() {
   const txArray = await Transaction.find({}).sort('-blockNumber').limit(1).exec()
   return txArray === [] ? null : txArray[0].blockNumber
 }
@@ -14,10 +14,10 @@ async function getLatestTransactionBlock() {
 export async function fetchTransactions() {
   logger.info('==== Start Transaction import ====')
   try {
-    const blockQuery = { transactionHashes: { $exists: true, $not: { $size: 0 } } }
-    const lastTxBlockNumber = await getLatestTransactionBlock()
-    if (lastTxBlockNumber) {
-      blockQuery.blockNumber = { $gt: lastTxBlockNumber }
+    const blockQuery: any = { transactionHashes: { $exists: true, $not: { $size: 0 } } }
+    const latestTxBlockNumber = await getLatestTxBlockNumber()
+    if (latestTxBlockNumber) {
+      blockQuery.blockNumber = { $gt: latestTxBlockNumber }
     }
     const blocksWithTransactions = await Block.find(blockQuery)
 
