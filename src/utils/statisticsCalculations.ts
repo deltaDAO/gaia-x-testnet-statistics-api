@@ -16,7 +16,7 @@ async function getTotalWalletAddresses() {
   return accountSet.size
 }
 
-async function getTotalTransactionsChartData(groupBy) {
+async function getTotalTransactionsChartData(groupBy = null) {
   const queryDate = new Date()
   const oneYearAgo = queryDate.getDate() - 365 // 365 days in the past
   queryDate.setDate(oneYearAgo)
@@ -40,20 +40,29 @@ async function getTotalTransactionsChartData(groupBy) {
   return { timeStamps, overallValues }
 }
 
+async function saveStatistic(
+  totalBlocks: number,
+  totalTransactions: number,
+  totalWalletAddresses: number,
+  totalAssets: number,
+  totalTransactionsChartData: any
+) {
+  Statistic.create({ totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData })
+}
+
 export async function calculateStatistics() {
   logger.info('==== start building statistics ====')
-  const blocksWithTransactions = await Block.find({ transactionHashes: { $exists: true, $not: { $size: 0 } } })
   const totalBlocks = await Block.countDocuments({})
 
   const totalTransactions = await Transaction.countDocuments({})
-  const totalWalletAddresses = await getTotalWalletAddresses(blocksWithTransactions)
+  const totalWalletAddresses = await getTotalWalletAddresses()
   const totalAssets = await CreateTokenEvent.countDocuments({})
 
-  const totalTransactionsChartData = {}
+  const totalTransactionsChartData: any = {}
   totalTransactionsChartData.groupedByDay = await getTotalTransactionsChartData()
   totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
   totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
 
-  Statistic.create({ totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData })
+  await saveStatistic(totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData)
   logger.info('==== finished building statistics ====')
 }

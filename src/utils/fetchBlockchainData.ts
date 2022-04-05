@@ -3,7 +3,7 @@ import { getTokenCreatedEvents } from './fetchCreateTokenEvents'
 import { calculateStatistics } from './statisticsCalculations'
 import { fetchTransactions } from './fetchTransactions'
 
-export async function queryTestnet() {
+export async function fetchBlockchainData() {
   await fetchBlocks()
   await getTokenCreatedEvents()
   await fetchTransactions()
