@@ -11,7 +11,7 @@ async function getLatestEventBlockNumberFromDb() {
   return eventArray === [] ? null : eventArray[0].blockNumber
 }
 
-export async function getEvents() {
+export async function getTokenCreatedEvents() {
   logger.info('==== Start event import ====')
   const contract = new ethers.Contract(contractAddress, abi, provider)
 
