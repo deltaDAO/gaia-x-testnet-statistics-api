@@ -16,7 +16,7 @@ import { Routes } from './interfaces/routes.interface'
 import errorMiddleware from './middlewares/error.middleware'
 import { logger, stream } from './utils/logger'
 import { version, name, description } from '../package.json'
-import { startCronJobs } from './utils/cronJobs'
+import { startFetchBlockchainData } from './utils/fetchBlockchainData'
 
 class App {
   public app: express.Application
@@ -131,6 +131,6 @@ class App {
     this.app.use(errorMiddleware)
   }
 }
-startCronJobs()
+startFetchBlockchainData()
 
 export default App

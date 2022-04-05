@@ -2,11 +2,7 @@ import * as cron from 'node-cron'
 import { fetchBlockchainData } from './fetchBlockchainData'
 import { logger } from './logger'
 
-export async function startCronJobs() {
-  /**
-   * initial querying of the node data to prevent too long imports in the cronjob
-   */
-  await fetchBlockchainData()
+export async function startFetchBlockchainDataCronJob() {
   /**
    * start fetchBlockchainData every 15 minutes
    */
