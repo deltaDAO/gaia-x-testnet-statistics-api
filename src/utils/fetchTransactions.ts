@@ -29,7 +29,7 @@ export async function fetchTransactions() {
 
         const { hash, blockNumber, from, to }: { hash: string; blockNumber?: number; from: string; to?: string } = transaction
 
-        logger.info('Fetch Transaction:', hash, 'Block:', blockNumber)
+        logger.info(`Fetch Transaction: ${hash} Block: ${blockNumber}`)
 
         await Transaction.create({
           hash,
