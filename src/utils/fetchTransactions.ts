@@ -22,8 +22,7 @@ export async function fetchTransactions() {
     const blocksWithTransactions = await Block.find(blockQuery)
 
     for (const block of blocksWithTransactions) {
-      for (let index = 0; index < block.transactionHashes.length; index++) {
-        const txHash = block.transactionHashes[index]
+      for (const txHash of block.transactionHashes) {
         const transaction = await provider.getTransaction(txHash)
         logger.info('Fetch Transaction:', transaction.hash, 'Block:', transaction.blockNumber)
         await Transaction.create({
