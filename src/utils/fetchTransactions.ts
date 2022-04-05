@@ -22,16 +22,22 @@ export async function fetchTransactions() {
     const blocksWithTransactions = await Block.find(blockQuery)
 
     for (const block of blocksWithTransactions) {
-      for (const txHash of block.transactionHashes) {
+      const { unixTimestamp, transactionHashes }: { unixTimestamp: number; transactionHashes: string[] } = block
+
+      for (const txHash of transactionHashes) {
         const transaction = await provider.getTransaction(txHash)
-        logger.info('Fetch Transaction:', transaction.hash, 'Block:', transaction.blockNumber)
+
+        const { hash, blockNumber, from, to }: { hash: string; blockNumber?: number; from: string; to?: string } = transaction
+
+        logger.info('Fetch Transaction:', hash, 'Block:', blockNumber)
+
         await Transaction.create({
-          hash: transaction.hash,
-          blockNumber: transaction.blockNumber,
-          unixTimestamp: block.unixTimestamp,
-          timestamp: block.unixTimestamp,
-          fromAddress: transaction.from,
-          toAddress: transaction.to
+          hash,
+          blockNumber,
+          unixTimestamp,
+          timestamp: unixTimestamp,
+          fromAddress: from,
+          toAddress: to
         })
       }
     }
