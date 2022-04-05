@@ -37,7 +37,7 @@ function getBlock(blockNumber) {
   return provider.getBlock(blockNumber)
 }
 
-export async function fetchBlocks(bundleSize: number) {
+export async function fetchBlocks(bundleSize = 10000) {
   logger.info('==== Start Block import ====')
   try {
     const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
