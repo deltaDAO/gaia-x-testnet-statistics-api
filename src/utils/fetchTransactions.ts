@@ -1,7 +1,9 @@
 import { ethers } from 'ethers'
+import { Transaction as TransactionI } from 'interfaces/transaction.interface'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
 import { logger } from './logger'
+import { getDateFromUnixTimestamp } from './util'
 
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
@@ -9,6 +11,10 @@ const provider = new ethers.providers.JsonRpcProvider(providerURL)
 async function getLatestTxBlockNumber() {
   const txArray = await Transaction.find({}).sort('-blockNumber').limit(1).exec()
   return txArray === [] ? null : txArray[0].blockNumber
+}
+
+async function saveTransaction(transaction: TransactionI) {
+  Transaction.create(transaction)
 }
 
 export async function fetchTransactions() {
@@ -31,11 +37,11 @@ export async function fetchTransactions() {
 
         logger.info(`Fetch Transaction: ${hash} Block: ${blockNumber}`)
 
-        await Transaction.create({
+        await saveTransaction({
           hash,
           blockNumber,
           unixTimestamp,
-          timestamp: unixTimestamp,
+          timestamp: getDateFromUnixTimestamp(unixTimestamp),
           fromAddress: from,
           toAddress: to
         })

@@ -18,8 +18,7 @@ const transactionSchema: Schema = new Schema(
     },
     timestamp: {
       type: Date,
-      required: true,
-      set: d => new Date(d * 1000)
+      required: true
     },
     fromAddress: {
       type: String,

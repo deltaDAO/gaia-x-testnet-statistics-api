@@ -5,6 +5,7 @@ const { abi, contractAddress } = require('./dtfactory.json')
 import CreateTokenEvent from '../models/createTokenEvent.model'
 import Block from '../models/block.model'
 import { logger } from './logger'
+import { getDateFromUnixTimestamp } from './util'
 
 async function getLatestEventBlockNumberFromDb() {
   const eventArray = await CreateTokenEvent.find({}).sort('-blockNumber').limit(1).exec()
@@ -22,26 +23,34 @@ export async function getTokenCreatedEvents() {
 
   const cleanedEvents = []
   for (const event of events) {
-    const existingEvent = await CreateTokenEvent.findOne({ transactionHash: event.transactionHash })
+    const { blockNumber, transactionHash }: { blockNumber: number; transactionHash: string } = event
+    const existingEvent = await CreateTokenEvent.findOne({ transactionHash })
     if (existingEvent) {
       if (!(existingEvent.unixTimestamp === 1234567890)) {
         continue
       }
-      const eventBlock = await Block.findOne({ blockNumber: event.blockNumber })
+      const eventBlock = await Block.findOne({ blockNumber })
+      const { unixTimestamp: eventBlockUnixTimestamp } = eventBlock
+      const eventBlockDate = getDateFromUnixTimestamp(eventBlockUnixTimestamp)
       await CreateTokenEvent.findByIdAndUpdate(
         { _id: existingEvent._id },
-        { unixTimestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890, timestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890 }
+        {
+          unixTimestamp: eventBlock ? eventBlockUnixTimestamp : 1234567890,
+          timestamp: eventBlock ? eventBlockDate : getDateFromUnixTimestamp(1234567890)
+        }
       )
       continue
     }
 
-    const eventBlock = await Block.findOne({ blockNumber: event.blockNumber })
+    const eventBlock = await Block.findOne({ blockNumber })
+    const { unixTimestamp: eventBlockUnixTimestamp } = eventBlock
+    const eventBlockDate = getDateFromUnixTimestamp(eventBlockUnixTimestamp)
 
     cleanedEvents.push({
-      blockNumber: event.blockNumber,
-      unixTimestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890,
-      timestamp: eventBlock ? eventBlock.unixTimestamp : 1234567890,
-      transactionHash: event.transactionHash
+      blockNumber,
+      unixTimestamp: eventBlock ? eventBlockUnixTimestamp : 1234567890,
+      timestamp: eventBlock ? eventBlockDate : getDateFromUnixTimestamp(1234567890),
+      transactionHash
     })
   }
 

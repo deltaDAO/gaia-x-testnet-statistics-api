@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import Block from '../models/block.model'
 import { logger } from './logger'
+import { getDateFromUnixTimestamp } from './util'
 
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
@@ -51,7 +52,7 @@ export async function fetchBlocks(bundleSize: number) {
       blockArray.push({
         blockNumber: number,
         unixTimestamp: timestamp,
-        timestamp: timestamp,
+        timestamp: getDateFromUnixTimestamp(timestamp),
         transactionHashes: transactions
       })
     }

@@ -14,8 +14,7 @@ const createTokenEventSchema: Schema = new Schema(
     },
     timestamp: {
       type: Date,
-      required: true,
-      set: d => new Date(d * 1000)
+      required: true
     },
     transactionHash: {
       type: String,
