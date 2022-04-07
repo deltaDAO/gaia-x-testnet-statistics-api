@@ -21,3 +21,7 @@ export const isEmpty = (value: string | number | object): boolean => {
 export function getValueAsArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value]
 }
+
+export function getDateFromUnixTimestamp(unixTimestamp: number): Date {
+  return new Date(unixTimestamp * 1000)
+}

@@ -4,6 +4,8 @@ import Statistic from '../models/statistic.model'
 import Transaction from '../models/transaction.model'
 import _ from 'lodash'
 import { format, getWeek } from 'date-fns'
+import { logger } from './logger'
+import { Statistic as StatisticI } from 'interfaces/statistic.interface'
 
 async function getTotalWalletAddresses() {
   const accountSet = new Set()
@@ -15,7 +17,7 @@ async function getTotalWalletAddresses() {
   return accountSet.size
 }
 
-async function getTotalTransactionsChartData(groupBy) {
+async function getTotalTransactionsChartData(groupBy = null) {
   const queryDate = new Date()
   const oneYearAgo = queryDate.getDate() - 365 // 365 days in the past
   queryDate.setDate(oneYearAgo)
@@ -39,20 +41,24 @@ async function getTotalTransactionsChartData(groupBy) {
   return { timeStamps, overallValues }
 }
 
+async function saveStatistic(statistic: StatisticI) {
+  Statistic.create(statistic)
+}
+
 export async function calculateStatistics() {
-  const blocksWithTransactions = await Block.find({ transactionHashes: { $exists: true, $not: { $size: 0 } } })
+  logger.info('==== start building statistics ====')
   const totalBlocks = await Block.countDocuments({})
 
   const totalTransactions = await Transaction.countDocuments({})
-  const totalWalletAddresses = await getTotalWalletAddresses(blocksWithTransactions)
+  const totalWalletAddresses = await getTotalWalletAddresses()
   const totalAssets = await CreateTokenEvent.countDocuments({})
 
-  const totalTransactionsChartData = {}
+  const totalTransactionsChartData: any = {}
   totalTransactionsChartData.groupedByDay = await getTotalTransactionsChartData()
   totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
   totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
 
-  //console.log(totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData)
-
-  Statistic.create({ totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData })
+  const statistic: StatisticI = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
+  await saveStatistic(statistic)
+  logger.info('==== finished building statistics ====')
 }

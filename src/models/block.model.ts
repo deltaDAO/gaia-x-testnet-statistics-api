@@ -1,4 +1,4 @@
-import { Document, model, Types, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
 
 import { Block } from '../interfaces/block.interface'
 
@@ -15,8 +15,7 @@ const blockSchema: Schema = new Schema(
     },
     timestamp: {
       type: Date,
-      required: true,
-      set: d => new Date(d * 1000)
+      required: true
     },
     transactionHashes: {
       type: [String],
