@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { Block as BlockI } from 'interfaces/block.interface'
 import Block from '../models/block.model'
 import { logger } from './logger'
 import { getDateFromUnixTimestamp } from './util'
@@ -20,6 +21,10 @@ function getBlock(blockNumber) {
   return provider.getBlock(blockNumber)
 }
 
+async function saveBlocks(blocks: BlockI[]) {
+  Block.insertMany(blocks)
+}
+
 export async function fetchBlocks(bundleSize: number) {
   logger.info('==== Start Block import ====')
   try {
@@ -35,7 +40,7 @@ export async function fetchBlocks(bundleSize: number) {
     for (let currentBlockNumber = blockNumberStart; currentBlockNumber < latestBlockNumber; currentBlockNumber++) {
       if (currentBlockNumber > blockNumberEnd) {
         const newBlockNumberEnd = blockNumberEnd + bundleSize
-        await Block.insertMany(blockArray)
+        await saveBlocks(blockArray)
         logger.info(`blocks saved to DB (bundle size: ${bundleSize})`)
         blockArray = []
 
@@ -56,7 +61,7 @@ export async function fetchBlocks(bundleSize: number) {
         transactionHashes: transactions
       })
     }
-    await Block.insertMany(blockArray)
+    await saveBlocks(blockArray)
     logger.info(`blocks saved to DB (bundle size: ${bundleSize})`)
   } catch (error) {
     logger.error(error)
