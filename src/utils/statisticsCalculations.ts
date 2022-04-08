@@ -37,7 +37,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
   })
 
   const timeStamps = Object.keys(groupedBySelection)
-  const overallValues = Object.values(groupedBySelection).map(group => group.reduce((pv, cv) => (pv += 1), 0))
+  const overallValues = Object.values(groupedBySelection).map(group => (group ? group.reduce((pv, cv) => (pv += 1), 0) : 0))
 
   return { timeStamps, overallValues }
 }
