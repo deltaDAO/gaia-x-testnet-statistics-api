@@ -1,9 +1,9 @@
 export interface CreateTokenEvent {
-  _id: string
+  _id?: string
   blockNumber: number
   unixTimestamp: number
   timestamp: Date
   transactionHash: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
