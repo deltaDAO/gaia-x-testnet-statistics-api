@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { format, getWeek } from 'date-fns'
 import { logger } from './logger'
 import { Statistic as StatisticI } from 'interfaces/statistic.interface'
+import { Transaction as TransactionI } from 'interfaces/transaction.interface'
 
 async function getTotalWalletAddresses() {
   const accountSet = new Set()
@@ -25,7 +26,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
 
   const lastYearTransactions = await Transaction.find({ timestamp: { $gte: queryDate } }).exec()
 
-  const groupedBySelection = _.groupBy(lastYearTransactions, tx => {
+  const groupedBySelection: { [key: string]: TransactionI[] } = _.groupBy(lastYearTransactions, tx => {
     return groupBy === 'month'
       ? format(new Date(tx.unixTimestamp * 1000), 'MM.yyyy')
       : groupBy === 'week'
@@ -36,7 +37,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
   })
 
   const timeStamps = Object.keys(groupedBySelection)
-  const overallValues = Object.values(groupedBySelection).map(group => group.reduce((pv, cv) => (pv += 1), 0))
+  const overallValues = Object.values(groupedBySelection).map(group => (group ? group.reduce((pv, cv) => (pv += 1), 0) : 0))
 
   return { timeStamps, overallValues }
 }
