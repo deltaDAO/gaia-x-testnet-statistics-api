@@ -2,12 +2,18 @@ import * as cron from 'node-cron'
 import { fetchBlockchainData } from './fetchBlockchainData'
 import { logger } from './logger'
 
-export async function startFetchBlockchainDataCronJob() {
+export function startCronJobs() {
+  let isFetching = false
   /**
-   * start fetchBlockchainData every 15 minutes
+   * try to start fetchBlockchainData every minute
    */
-  cron.schedule('0,15,30,45 * * * *', () => {
-    logger.info('==== start fetchBlockchainData (cron) ====')
-    fetchBlockchainData()
+  cron.schedule('* * * * *', async () => {
+    if (!isFetching) {
+      isFetching = true
+      logger.info('==== start fetchBlockchainData (cron) ====')
+      await fetchBlockchainData()
+      logger.info('==== finished fetchBlockchainData (cron) ====')
+      isFetching = false
+    }
   })
 }
