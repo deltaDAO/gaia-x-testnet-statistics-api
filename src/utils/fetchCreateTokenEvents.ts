@@ -8,6 +8,7 @@ import { logger } from './logger'
 import { getDateFromUnixTimestamp } from './util'
 import { CreateTokenEvent as CreateTokenEventI } from 'interfaces/createTokenEvent.interface'
 import { Block as BlockI } from 'interfaces/block.interface'
+import { PLACEHOLDER_TIMESTAMP } from './constants'
 
 async function getLatestEventBlockNumberFromDb() {
   const eventArray = await CreateTokenEvent.find({}).sort('-blockNumber').limit(1).exec()
@@ -54,8 +55,8 @@ export async function getTokenCreatedEvents() {
       if (!eventBlock && !existingEvent) {
         cleanedEvents.push({
           blockNumber,
-          unixTimestamp: 1234567890,
-          timestamp: getDateFromUnixTimestamp(1234567890),
+          unixTimestamp: PLACEHOLDER_TIMESTAMP,
+          timestamp: getDateFromUnixTimestamp(PLACEHOLDER_TIMESTAMP),
           transactionHash
         })
         logger.info(`Added TokenCreated event: ${transactionHash} Block: ${blockNumber}`)
@@ -68,7 +69,7 @@ export async function getTokenCreatedEvents() {
       const eventBlockDate = getDateFromUnixTimestamp(eventBlockUnixTimestamp)
 
       if (existingEvent) {
-        if (!(existingEvent.unixTimestamp === 1234567890)) {
+        if (!(existingEvent.unixTimestamp === PLACEHOLDER_TIMESTAMP)) {
           continue
         }
         await updateCreateTokenEventTimestamps(existingEvent._id, eventBlockUnixTimestamp)
