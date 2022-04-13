@@ -52,6 +52,9 @@ export async function getTokenCreatedEvents() {
       const { blockNumber, transactionHash }: { blockNumber: number; transactionHash: string } = event
       const existingEvent = await findCreateTokenEvent(transactionHash)
       const eventBlock = await findBlock(blockNumber)
+
+      if (existingEvent && !(existingEvent.unixTimestamp === PLACEHOLDER_TIMESTAMP)) continue
+      if (!eventBlock && existingEvent) continue
       if (!eventBlock && !existingEvent) {
         cleanedEvents.push({
           blockNumber,
@@ -62,16 +65,10 @@ export async function getTokenCreatedEvents() {
         logger.info(`Added TokenCreated event: ${transactionHash} Block: ${blockNumber}`)
         continue
       }
-      if (!eventBlock) {
-        continue
-      }
       const { unixTimestamp: eventBlockUnixTimestamp } = eventBlock
       const eventBlockDate = getDateFromUnixTimestamp(eventBlockUnixTimestamp)
 
       if (existingEvent) {
-        if (!(existingEvent.unixTimestamp === PLACEHOLDER_TIMESTAMP)) {
-          continue
-        }
         await updateCreateTokenEventTimestamps(existingEvent._id, eventBlockUnixTimestamp)
         logger.info(`Updated timestamp TokenCreated event: ${transactionHash} Block: ${blockNumber}`)
         continue
