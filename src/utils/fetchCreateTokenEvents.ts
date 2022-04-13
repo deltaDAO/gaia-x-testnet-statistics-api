@@ -11,8 +11,8 @@ import { Block as BlockI } from 'interfaces/block.interface'
 import { PLACEHOLDER_TIMESTAMP } from './constants'
 
 async function getLatestEventBlockNumberFromDb() {
-  const eventArray = await CreateTokenEvent.find({}).sort('-blockNumber').limit(1).exec()
-  return eventArray?.[0]?.blockNumber
+  const eventArray = await CreateTokenEvent.findOne({}).sort('-blockNumber').exec()
+  return eventArray?.blockNumber
 }
 
 async function findCreateTokenEvent(transactionHash: string): Promise<CreateTokenEventI> {

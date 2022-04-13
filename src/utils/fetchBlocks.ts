@@ -13,8 +13,8 @@ async function getLatestBlockNumber() {
 }
 
 async function getLatestBlockNumberFromDb() {
-  const blockArray = await Block.find({}).sort('-blockNumber').limit(1).exec()
-  return blockArray?.[0]?.blockNumber
+  const blockArray = await Block.findOne({}).sort('-blockNumber').exec()
+  return blockArray?.blockNumber
 }
 
 function getBlock(blockNumber) {

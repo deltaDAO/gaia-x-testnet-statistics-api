@@ -9,8 +9,8 @@ const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanp
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
 async function getLatestTxBlockNumber() {
-  const txArray = await Transaction.find({}).sort('-blockNumber').limit(1).exec()
-  return txArray?.[0]?.blockNumber
+  const txArray = await Transaction.findOne({}).sort('-blockNumber').exec()
+  return txArray?.blockNumber
 }
 
 async function saveTransaction(transaction: TransactionI) {
