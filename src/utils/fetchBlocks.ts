@@ -31,7 +31,7 @@ export async function fetchBlocks(bundleSize: number) {
     const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
     const latestBlockNumber = await getLatestBlockNumber()
 
-    if (!latestBlockNumber) {
+    if (latestBlockNumber === undefined) {
       logger.error(`Failed to query latestBlockNumber.`)
       return
     }
