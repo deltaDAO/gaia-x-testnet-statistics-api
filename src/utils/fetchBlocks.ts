@@ -13,8 +13,8 @@ async function getLatestBlockNumber() {
 }
 
 async function getLatestBlockNumberFromDb() {
-  const blockArray = await Block.find({}).sort('-blockNumber').limit(1).exec()
-  return blockArray === [] ? null : blockArray[0].blockNumber
+  const blockArray = await Block.findOne({}).sort('-blockNumber').exec()
+  return blockArray?.blockNumber
 }
 
 function getBlock(blockNumber) {
@@ -30,6 +30,11 @@ export async function fetchBlocks(bundleSize: number) {
   try {
     const latestBlockNumberInDb = await getLatestBlockNumberFromDb()
     const latestBlockNumber = await getLatestBlockNumber()
+
+    if (latestBlockNumber === undefined) {
+      logger.error(`Failed to query latestBlockNumber.`)
+      return
+    }
 
     logger.info(`Latest Block in DB: ${latestBlockNumberInDb} Lastest Block: ${latestBlockNumber}`)
 

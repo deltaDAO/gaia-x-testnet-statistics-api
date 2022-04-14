@@ -9,8 +9,8 @@ const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanp
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
 async function getLatestTxBlockNumber() {
-  const txArray = await Transaction.find({}).sort('-blockNumber').limit(1).exec()
-  return txArray === [] ? null : txArray[0].blockNumber
+  const txArray = await Transaction.findOne({}).sort('-blockNumber').exec()
+  return txArray?.blockNumber
 }
 
 async function saveTransaction(transaction: TransactionI) {
@@ -22,8 +22,11 @@ export async function fetchTransactions() {
   try {
     const blockQuery: any = { transactionHashes: { $exists: true, $not: { $size: 0 } } }
     const latestTxBlockNumber = await getLatestTxBlockNumber()
+
     if (latestTxBlockNumber) {
       blockQuery.blockNumber = { $gt: latestTxBlockNumber }
+    } else {
+      logger.warn('Failed to query latestTxBlockNumber. Start from 0')
     }
     const blocksWithTransactions = await Block.find(blockQuery)
 
