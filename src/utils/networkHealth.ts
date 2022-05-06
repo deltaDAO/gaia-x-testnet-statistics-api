@@ -40,7 +40,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
     const includesGenesis = startBlockNumber === 0
 
     if (latestBlocks.length < minNumberOfBlocks) {
-      logger.warning(`Not enough blocks to analyze. Number of blocks: ${latestBlocks.length}, minimal numberOfBlocks: ${minNumberOfBlocks}`)
+      logger.warn(`Not enough blocks to analyze. Number of blocks: ${latestBlocks.length}, minimal numberOfBlocks: ${minNumberOfBlocks}`)
       return null
     }
     if (latestBlocks.length < numberOfBlocks) {
