@@ -25,7 +25,6 @@ export function startCronJobs() {
    */
   if (process.env.SLACK_WEBHOOK_SECRET_URL) {
     cron.schedule('0 * * * *', async () => {
-      // TODO change to hour
       if (!healthCheckRunning) {
         healthCheckRunning = true
         logger.info('==== start health check (cron) ====')
