@@ -1,9 +1,12 @@
 import * as cron from 'node-cron'
 import { fetchBlockchainData } from './fetchBlockchainData'
 import { logger } from './logger'
+import { checkNetworkHealth } from './networkHealth'
 
 export function startCronJobs() {
   let isFetching = false
+  let healthCheckRunning = false
+
   /**
    * try to start fetchBlockchainData every minute
    */
@@ -14,6 +17,20 @@ export function startCronJobs() {
       await fetchBlockchainData()
       logger.info('==== finished fetchBlockchainData (cron) ====')
       isFetching = false
+    }
+  })
+
+  /**
+   * check network health every hour
+   */
+  cron.schedule('0 * * * *', async () => {
+    // TODO change to hour
+    if (!healthCheckRunning && process.env.SLACK_WEBHOOK_SECRET_URL) {
+      healthCheckRunning = true
+      logger.info('==== start health check (cron) ====')
+      await checkNetworkHealth()
+      logger.info('==== finished health check (cron) ====')
+      healthCheckRunning = false
     }
   })
 }
