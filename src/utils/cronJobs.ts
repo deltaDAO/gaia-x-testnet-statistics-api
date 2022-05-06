@@ -23,14 +23,16 @@ export function startCronJobs() {
   /**
    * check network health every hour
    */
-  cron.schedule('0 * * * *', async () => {
-    // TODO change to hour
-    if (!healthCheckRunning && process.env.SLACK_WEBHOOK_SECRET_URL) {
-      healthCheckRunning = true
-      logger.info('==== start health check (cron) ====')
-      await checkNetworkHealth()
-      logger.info('==== finished health check (cron) ====')
-      healthCheckRunning = false
-    }
-  })
+  if (process.env.SLACK_WEBHOOK_SECRET_URL) {
+    cron.schedule('0 * * * *', async () => {
+      // TODO change to hour
+      if (!healthCheckRunning) {
+        healthCheckRunning = true
+        logger.info('==== start health check (cron) ====')
+        await checkNetworkHealth()
+        logger.info('==== finished health check (cron) ====')
+        healthCheckRunning = false
+      }
+    })
+  }
 }
