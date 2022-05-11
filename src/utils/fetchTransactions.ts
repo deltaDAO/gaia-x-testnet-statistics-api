@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { Block as IBlock } from 'interfaces/block.interface'
 import { Transaction as TransactionI } from 'interfaces/transaction.interface'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
@@ -9,8 +10,8 @@ const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanp
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
 
 async function getLatestTxBlockNumber() {
-  const txArray = await Transaction.findOne({}).sort('-blockNumber').exec()
-  return txArray?.blockNumber
+  const txArray = await Transaction.find().sort({ blockNumber: -1 }).limit(1)
+  return txArray?.[0]?.blockNumber
 }
 
 async function saveTransaction(transaction: TransactionI) {
@@ -28,14 +29,23 @@ export async function fetchTransactions() {
     } else {
       logger.warn('Failed to query latestTxBlockNumber. Start from 0')
     }
-    const blocksWithTransactions = await Block.find(blockQuery)
+
+    let blocksWithTransactions: IBlock[]
+    try {
+      blocksWithTransactions = await Block.find(blockQuery)
+    } catch (error) {
+      logger.error(`Failed to query blocks from db. Error is: ${error}`)
+    }
 
     for (const block of blocksWithTransactions) {
       const { unixTimestamp, transactionHashes }: { unixTimestamp: number; transactionHashes: string[] } = block
 
       for (const txHash of transactionHashes) {
         const transaction = await provider.getTransaction(txHash)
-
+        if (!transaction) {
+          logger.warn(`Tried to get transaction with txHash ${txHash} from provider. Result is : ${transaction}`)
+          continue
+        }
         const { hash, blockNumber, from, to }: { hash: string; blockNumber?: number; from: string; to?: string } = transaction
 
         logger.info(`Fetch Transaction: ${hash} Block: ${blockNumber}`)
