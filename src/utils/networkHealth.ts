@@ -26,7 +26,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
     allowedSingleBlockTimeDeviationInSeconds,
     maxAllowedAverageBlocktime,
     minAllowedAverageBlocktime,
-    numberOfBlocks,
+    numberOfBlocksToAnalyze,
     targetBlockTimeInSeconds
   } = networkHealthConfig
   const minAllowedBlocktime = targetBlockTimeInSeconds - allowedSingleBlockTimeDeviationInSeconds
@@ -34,18 +34,18 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
   const minNumberOfBlocks = 10
 
   try {
-    const latestBlocks = await getLatestBlocks(numberOfBlocks)
+    const latestBlocks = await getLatestBlocks(numberOfBlocksToAnalyze)
     const startBlockNumber = latestBlocks[latestBlocks.length - 1].blockNumber
     const endBlockNumber = latestBlocks[0].blockNumber
     const includesGenesis = startBlockNumber === 0
 
     if (latestBlocks.length < minNumberOfBlocks) {
-      logger.warn(`Not enough blocks to analyze. Number of blocks: ${latestBlocks.length}, minimal numberOfBlocks: ${minNumberOfBlocks}`)
+      logger.warn(`Not enough blocks to analyze. Number of blocks: ${latestBlocks.length}, minimal numberOfBlocksToAnalyze: ${minNumberOfBlocks}`)
       return null
     }
-    if (latestBlocks.length < numberOfBlocks) {
+    if (latestBlocks.length < numberOfBlocksToAnalyze) {
       logger.warn(
-        `Not enough blocks to analyze. The in the networkHealthConfig specified number could not be reached. Number of blocks: ${latestBlocks.length}, specified numberOfBlocks: ${numberOfBlocks}`
+        `Not enough blocks to analyze. The in the networkHealthConfig specified number could not be reached. Number of blocks: ${latestBlocks.length}, specified numberOfBlocksToAnalyze: ${numberOfBlocksToAnalyze}`
       )
       return null
     }

@@ -1,5 +1,5 @@
 export interface NetworkHealthConfig {
-  numberOfBlocks: number
+  numberOfBlocksToAnalyze: number
   targetBlockTimeInSeconds: number
   minAllowedAverageBlocktime: number
   maxAllowedAverageBlocktime: number
