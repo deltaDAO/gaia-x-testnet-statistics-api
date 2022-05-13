@@ -5,7 +5,7 @@ import { checkNetworkHealth } from './networkHealth'
 
 export function startCronJobs() {
   let isFetching = false
-  let healthCheckRunning = false
+  let isHealthCheckRunning = false
 
   /**
    * try to start fetchBlockchainData every minute
@@ -25,12 +25,12 @@ export function startCronJobs() {
    */
   if (process.env.SLACK_WEBHOOK_SECRET_URL) {
     cron.schedule('0 * * * *', async () => {
-      if (!healthCheckRunning) {
-        healthCheckRunning = true
+      if (!isHealthCheckRunning) {
+        isHealthCheckRunning = true
         logger.info('==== start health check (cron) ====')
         await checkNetworkHealth()
         logger.info('==== finished health check (cron) ====')
-        healthCheckRunning = false
+        isHealthCheckRunning = false
       }
     })
   }
