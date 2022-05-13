@@ -5,7 +5,7 @@ import Transaction from '../models/transaction.model'
 import _ from 'lodash'
 import { format, getWeek } from 'date-fns'
 import { logger } from './logger'
-import { Statistic as StatisticI } from 'interfaces/statistic.interface'
+import { IStatistic } from 'interfaces/statistic.interface'
 import { Transaction as TransactionI } from 'interfaces/transaction.interface'
 
 async function getTotalWalletAddresses() {
@@ -42,7 +42,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
   return { timeStamps, overallValues }
 }
 
-async function saveStatistic(statistic: StatisticI) {
+async function saveStatistic(statistic: IStatistic) {
   Statistic.create(statistic)
 }
 
@@ -59,7 +59,7 @@ export async function calculateStatistics() {
   totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
   totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
 
-  const statistic: StatisticI = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
+  const statistic: IStatistic = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
   await saveStatistic(statistic)
   logger.info('==== finished building statistics ====')
 }
