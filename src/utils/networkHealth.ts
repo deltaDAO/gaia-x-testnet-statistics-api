@@ -3,7 +3,7 @@ import { BlockTimeHealth } from '../interfaces/blockTimeHealth.interface'
 import { getLatestBlocks } from '../repositories/block.repository'
 import { logger } from './logger'
 import { networkHealthConfig } from './networkHealthConfig'
-import { networkHealthNotification } from './notifications'
+import { sendNetworkHealthNotification } from './notifications'
 
 export async function checkNetworkHealth() {
   const blockTimeHealth = await calculateBlockTimeHealth()
@@ -16,7 +16,7 @@ export async function checkNetworkHealth() {
   logger.info(JSON.stringify(networkHealth))
 
   if (!blockTimeHealth.isHealthy) {
-    networkHealthNotification(networkHealth)
+    sendNetworkHealthNotification(networkHealth)
   }
 }
 
