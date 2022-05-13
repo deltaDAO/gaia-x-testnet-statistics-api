@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { IBlock } from 'interfaces/block.interface'
-import { Transaction as TransactionI } from 'interfaces/transaction.interface'
+import { ITransaction } from 'interfaces/transaction.interface'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
 import { logger } from './logger'
@@ -14,7 +14,7 @@ async function getLatestTxBlockNumber() {
   return txArray?.[0]?.blockNumber
 }
 
-async function saveTransaction(transaction: TransactionI) {
+async function saveTransaction(transaction: ITransaction) {
   Transaction.create(transaction)
 }
 
