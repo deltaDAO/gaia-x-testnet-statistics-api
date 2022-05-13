@@ -22,8 +22,10 @@ export function startCronJobs() {
 
   /**
    * check network health every hour
+   * set FF_NOTIFY_HEALTH_SLACK to true in .env to enable
+   * SLACK_WEBHOOK_SECRET_URL needed
    */
-  if (process.env.SLACK_WEBHOOK_SECRET_URL) {
+  if (process.env.FF_NOTIFY_HEALTH_SLACK) {
     cron.schedule('0 * * * *', async () => {
       if (!isHealthCheckRunning) {
         isHealthCheckRunning = true
