@@ -1,4 +1,4 @@
-export interface Statistic {
+export interface IStatistic {
   _id?: string
   totalTransactions: number
   totalBlocks: number

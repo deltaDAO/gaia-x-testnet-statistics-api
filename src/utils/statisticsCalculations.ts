@@ -5,8 +5,8 @@ import Transaction from '../models/transaction.model'
 import _ from 'lodash'
 import { format, getWeek } from 'date-fns'
 import { logger } from './logger'
-import { Statistic as StatisticI } from 'interfaces/statistic.interface'
-import { Transaction as TransactionI } from 'interfaces/transaction.interface'
+import { IStatistic } from 'interfaces/statistic.interface'
+import { ITransaction } from 'interfaces/transaction.interface'
 
 async function getTotalWalletAddresses() {
   const accountSet = new Set()
@@ -26,7 +26,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
 
   const lastYearTransactions = await Transaction.find({ timestamp: { $gte: queryDate } }).exec()
 
-  const groupedBySelection: { [key: string]: TransactionI[] } = _.groupBy(lastYearTransactions, tx => {
+  const groupedBySelection: { [key: string]: ITransaction[] } = _.groupBy(lastYearTransactions, tx => {
     return groupBy === 'month'
       ? format(new Date(tx.unixTimestamp * 1000), 'MM.yyyy')
       : groupBy === 'week'
@@ -42,7 +42,7 @@ async function getTotalTransactionsChartData(groupBy = null) {
   return { timeStamps, overallValues }
 }
 
-async function saveStatistic(statistic: StatisticI) {
+async function saveStatistic(statistic: IStatistic) {
   Statistic.create(statistic)
 }
 
@@ -59,7 +59,7 @@ export async function calculateStatistics() {
   totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
   totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
 
-  const statistic: StatisticI = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
+  const statistic: IStatistic = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
   await saveStatistic(statistic)
   logger.info('==== finished building statistics ====')
 }
