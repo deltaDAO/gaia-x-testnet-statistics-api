@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Block as IBlock } from 'interfaces/block.interface'
+import { IBlock } from 'interfaces/block.interface'
 import { Transaction as TransactionI } from 'interfaces/transaction.interface'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'

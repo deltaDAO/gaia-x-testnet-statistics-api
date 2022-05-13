@@ -7,7 +7,7 @@ import Block from '../models/block.model'
 import { logger } from './logger'
 import { getDateFromUnixTimestamp } from './util'
 import { CreateTokenEvent as CreateTokenEventI } from 'interfaces/createTokenEvent.interface'
-import { Block as BlockI } from 'interfaces/block.interface'
+import { IBlock } from 'interfaces/block.interface'
 import { PLACEHOLDER_TIMESTAMP } from './constants'
 
 async function getLatestEventBlockNumberFromDb() {
@@ -32,7 +32,7 @@ async function saveCreateTokenEvents(events: CreateTokenEventI[]) {
   CreateTokenEvent.insertMany(events)
 }
 
-async function findBlock(blockNumber: number): Promise<BlockI> {
+async function findBlock(blockNumber: number): Promise<IBlock> {
   return Block.findOne({ blockNumber })
 }
 

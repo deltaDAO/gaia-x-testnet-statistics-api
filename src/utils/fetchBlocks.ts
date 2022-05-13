@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Block as BlockI } from 'interfaces/block.interface'
+import { IBlock } from 'interfaces/block.interface'
 import Block from '../models/block.model'
 import { logger } from './logger'
 import { getDateFromUnixTimestamp } from './util'
@@ -21,7 +21,7 @@ function getBlock(blockNumber) {
   return provider.getBlock(blockNumber)
 }
 
-async function saveBlocks(blocks: BlockI[]) {
+async function saveBlocks(blocks: IBlock[]) {
   Block.insertMany(blocks)
 }
 

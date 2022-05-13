@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose'
 
-import { Block } from '../interfaces/block.interface'
+import { IBlock } from '../interfaces/block.interface'
 
 const blockSchema: Schema = new Schema(
   {
@@ -27,9 +27,6 @@ const blockSchema: Schema = new Schema(
   }
 )
 
-// Make sure there are no duplicates (each publicKey once per list)
-//blockSchema.index({ publicKey: 1, list_id: 1 }, { unique: true })
-
-const Block = model<Block & Document>('Block', blockSchema)
+const Block = model<IBlock & Document>('Block', blockSchema)
 
 export default Block
