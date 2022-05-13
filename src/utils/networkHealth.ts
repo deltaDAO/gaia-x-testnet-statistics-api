@@ -37,7 +37,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
     const latestBlocks = await getLatestBlocks(numberOfBlocksToAnalyze)
     const startBlockNumber = latestBlocks[latestBlocks.length - 1].blockNumber
     const endBlockNumber = latestBlocks[0].blockNumber
-    const includesGenesis = startBlockNumber === 0
+    const hasGenesisBlockIncluded = startBlockNumber === 0
 
     if (latestBlocks.length < minNumberOfBlocks) {
       logger.warn(`Not enough blocks to analyze. Number of blocks: ${latestBlocks.length}, minimal numberOfBlocksToAnalyze: ${minNumberOfBlocks}`)
@@ -65,7 +65,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
       }
       lastBlockTimeStamp = block.unixTimestamp
     }
-    const numberOfBlocksAnalyzed = includesGenesis ? latestBlocks.length - 2 : latestBlocks.length - 1
+    const numberOfBlocksAnalyzed = hasGenesisBlockIncluded ? latestBlocks.length - 2 : latestBlocks.length - 1
     const averageBlockTime = blockTimeSum / numberOfBlocksAnalyzed
     const isHealthy =
       averageBlockTime >= minAllowedAverageBlocktime &&
