@@ -1,5 +1,5 @@
 export interface BlockTimeHealth {
-  healthy: boolean
+  isHealthy: boolean
   averageBlockTime: number
   numberOfDeviatedBlocks: number
   startBlockNumber: number

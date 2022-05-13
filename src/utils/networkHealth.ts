@@ -15,7 +15,7 @@ export async function checkNetworkHealth() {
   }
   logger.info(JSON.stringify(networkHealth))
 
-  if (!blockTimeHealth.healthy) {
+  if (!blockTimeHealth.isHealthy) {
     networkHealthNotification(networkHealth)
   }
 }
@@ -67,7 +67,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
     }
     const numberOfBlocksAnalyzed = includesGenesis ? latestBlocks.length - 2 : latestBlocks.length - 1
     const averageBlockTime = blockTimeSum / numberOfBlocksAnalyzed
-    const healthy =
+    const isHealthy =
       averageBlockTime >= minAllowedAverageBlocktime &&
       averageBlockTime <= maxAllowedAverageBlocktime &&
       numberOfDeviatedBlocks <= allowedNumberDeviatedBlocks
@@ -75,7 +75,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
     const blockTimeHealth: BlockTimeHealth = {
       averageBlockTime,
       endBlockNumber,
-      healthy,
+      isHealthy,
       numberOfBlocksAnalyzed,
       numberOfDeviatedBlocks,
       startBlockNumber
