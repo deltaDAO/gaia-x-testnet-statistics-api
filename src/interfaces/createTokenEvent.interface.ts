@@ -1,4 +1,4 @@
-export interface CreateTokenEvent {
+export interface ICreateTokenEvent {
   _id?: string
   blockNumber: number
   unixTimestamp: number

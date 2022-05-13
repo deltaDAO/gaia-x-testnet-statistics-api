@@ -6,7 +6,7 @@ import CreateTokenEvent from '../models/createTokenEvent.model'
 import Block from '../models/block.model'
 import { logger } from './logger'
 import { getDateFromUnixTimestamp } from './util'
-import { CreateTokenEvent as CreateTokenEventI } from 'interfaces/createTokenEvent.interface'
+import { ICreateTokenEvent } from 'interfaces/createTokenEvent.interface'
 import { IBlock } from 'interfaces/block.interface'
 import { PLACEHOLDER_TIMESTAMP } from './constants'
 
@@ -15,7 +15,7 @@ async function getLatestEventBlockNumberFromDb() {
   return eventArray?.blockNumber
 }
 
-async function findCreateTokenEvent(transactionHash: string): Promise<CreateTokenEventI> {
+async function findCreateTokenEvent(transactionHash: string): Promise<ICreateTokenEvent> {
   return CreateTokenEvent.findOne({ transactionHash })
 }
 
@@ -28,7 +28,7 @@ async function updateCreateTokenEventTimestamps(id: string, eventBlockUnixTimest
   return CreateTokenEvent.findByIdAndUpdate({ _id: id }, update)
 }
 
-async function saveCreateTokenEvents(events: CreateTokenEventI[]) {
+async function saveCreateTokenEvents(events: ICreateTokenEvent[]) {
   CreateTokenEvent.insertMany(events)
 }
 
@@ -46,7 +46,7 @@ export async function getTokenCreatedEvents() {
     const endBlock = 'latest'
 
     const events = await contract.queryFilter(filter, startBlock, endBlock)
-    const cleanedEvents: CreateTokenEventI[] = []
+    const cleanedEvents: ICreateTokenEvent[] = []
 
     for (const event of events) {
       const { blockNumber, transactionHash }: { blockNumber: number; transactionHash: string } = event
