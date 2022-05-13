@@ -83,7 +83,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
 
     return blockTimeHealth
   } catch (error) {
-    logger.error('Failed to calculate BlockTimeHealth')
+    logger.error(`Failed to calculate BlockTimeHealth. Error: ${error}`)
     return null
   }
 }
