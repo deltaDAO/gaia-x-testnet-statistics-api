@@ -15,6 +15,7 @@ async function sendNotification(text: string): Promise<boolean> {
     return false
   } catch (error) {
     // Important: don't expose SLACK_WEBHOOK_SECRET_URL to logs
+    // logging error could expose it
     logger.error('Failed to send slack notification.')
     return false
   }
