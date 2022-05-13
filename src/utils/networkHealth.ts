@@ -31,7 +31,7 @@ async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
   } = networkHealthConfig
   const minAllowedBlocktime = targetBlockTimeInSeconds - allowedSingleBlockTimeDeviationInSeconds
   const maxAllowedBlocktime = targetBlockTimeInSeconds + allowedSingleBlockTimeDeviationInSeconds
-  const minNumberOfBlocks = 10
+  const minNumberOfBlocks = 10 // hard minimum of blocks to analyze to prevent useless operations (will override networkHealthConfig)
 
   try {
     const latestBlocks = await getLatestBlocks(numberOfBlocksToAnalyze)
