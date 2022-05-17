@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose'
 
-import { Statistic } from '../interfaces/statistic.interface'
+import { IStatistic } from '../interfaces/statistic.interface'
 
 const StatisticSchema: Schema = new Schema(
   {
@@ -32,6 +32,6 @@ const StatisticSchema: Schema = new Schema(
 // Make sure there are no duplicates (each publicKey once per list)
 //StatisticSchema.index({ publicKey: 1, list_id: 1 }, { unique: true })
 
-const Statistic = model<Statistic & Document>('Statistic', StatisticSchema)
+const Statistic = model<IStatistic & Document>('Statistic', StatisticSchema)
 
 export default Statistic

@@ -1,4 +1,4 @@
-export interface Transaction {
+export interface ITransaction {
   _id?: string
   hash: string
   blockNumber: number
