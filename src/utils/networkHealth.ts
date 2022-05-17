@@ -20,7 +20,7 @@ export async function checkNetworkHealth() {
   }
 }
 
-async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> {
+async function calculateBlockTimeHealth(): Promise<BlockTimeHealth> | null {
   const {
     allowedNumberDeviatedBlocks,
     allowedSingleBlockTimeDeviationInSeconds,
