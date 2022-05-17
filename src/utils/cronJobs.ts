@@ -19,6 +19,7 @@ export function startCronJobs() {
       isFetching = false
     }
   })
+  logger.info('==== fetchBlockchainData activated (cron) ====')
 
   /**
    * check network health every hour
@@ -26,7 +27,9 @@ export function startCronJobs() {
    * SLACK_WEBHOOK_SECRET_URL needed
    */
   if (process.env.FF_NOTIFY_HEALTH_SLACK) {
-    cron.schedule('0 * * * *', async () => {
+    if (!process.env.SLACK_WEBHOOK_SECRET_URL) logger.warn('No SLACK_WEBHOOK_SECRET_URL configured')
+
+    cron.schedule('0,15,30,45 * * * *', async () => {
       if (!isHealthCheckRunning) {
         isHealthCheckRunning = true
         logger.info('==== start health check (cron) ====')
@@ -35,5 +38,6 @@ export function startCronJobs() {
         isHealthCheckRunning = false
       }
     })
+    logger.info('==== health check activated (cron) ====')
   }
 }
