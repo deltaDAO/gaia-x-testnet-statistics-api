@@ -17,6 +17,7 @@ import errorMiddleware from './middlewares/error.middleware'
 import { logger, stream } from './utils/logger'
 import { version, name, description } from '../package.json'
 import { startCronJobs } from './utils/cronJobs'
+import { generateArrayOfPastMonths, generateArrayOfPastWeeks, generateArrayOfPastDays } from './utils/util'
 
 class App {
   public app: express.Application
@@ -131,6 +132,9 @@ class App {
     this.app.use(errorMiddleware)
   }
 }
+generateArrayOfPastMonths(12)
+generateArrayOfPastWeeks(52)
+generateArrayOfPastDays(365)
 startCronJobs()
 
 export default App

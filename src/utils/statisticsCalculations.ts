@@ -3,10 +3,11 @@ import CreateTokenEvent from '../models/createTokenEvent.model'
 import Statistic from '../models/statistic.model'
 import Transaction from '../models/transaction.model'
 import _ from 'lodash'
-import { format, getWeek } from 'date-fns'
+import { format, getWeek, getWeekYear } from 'date-fns'
 import { logger } from './logger'
 import { IStatistic } from 'interfaces/statistic.interface'
 import { ITransaction } from 'interfaces/transaction.interface'
+import { generateArrayOfPastMonths, generateArrayOfPastWeeks, generateArrayOfPastDays } from '../utils/util'
 
 const EXCLUDED_TO_ADDRESSES = process.env.STATISTICS_EXCLUDED_TO_ADDRESSES?.split(',') ?? [] // exclude specific toAdresses from statistics
 
@@ -33,16 +34,37 @@ async function getTotalTransactionsChartData(groupBy = null) {
 
   const groupedBySelection: { [key: string]: ITransaction[] } = _.groupBy(lastYearTransactions, tx => {
     return groupBy === 'month'
-      ? format(new Date(tx.unixTimestamp * 1000), 'MM.yyyy')
+      ? format(tx.timestamp, 'MM.yyyy')
       : groupBy === 'week'
-      ? `${getWeek(new Date(tx.unixTimestamp * 1000), {
+      ? `${getWeek(tx.timestamp, {
           weekStartsOn: 1
-        })}.${format(new Date(tx.unixTimestamp * 1000), 'yyyy')}`
-      : format(new Date(tx.unixTimestamp * 1000), 'dd.MM.yyyy')
+        })}.${getWeekYear(tx.timestamp)}`
+      : format(tx.timestamp, 'dd.MM.yyyy')
   })
 
+  console.log('HERE!!', typeof groupedBySelection)
+
   const timeStamps = Object.keys(groupedBySelection)
-  const overallValues = Object.values(groupedBySelection).map(group => (group ? group.reduce((pv, cv) => (pv += 1), 0) : 0))
+  const overallValues = Object.values(groupedBySelection).map(group => (group ? group.length : 0))
+
+  let dateLabels: string[] = []
+  switch (groupBy) {
+    case 'month':
+      dateLabels = generateArrayOfPastMonths(12)
+      break
+    case 'week':
+      dateLabels = generateArrayOfPastWeeks(52)
+      break
+    default:
+      dateLabels = generateArrayOfPastDays(365)
+      break
+  }
+
+  // let totalTransactionsPerDate: number[] = []
+  // for (const label of dateLabels) {
+  //   const numberOfTransactions = groupedBySelection.get(label) ?
+  //   totalTransactionsPerDate.push( groupedBySelection.get() )
+  // }
 
   return { timeStamps, overallValues }
 }
