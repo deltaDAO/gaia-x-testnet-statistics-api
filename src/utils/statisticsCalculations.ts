@@ -8,9 +8,11 @@ import { logger } from './logger'
 import { IStatistic } from 'interfaces/statistic.interface'
 import { ITransaction } from 'interfaces/transaction.interface'
 
+const EXCLUDED_TO_ADDRESSES = process.env.STATISTICS_EXCLUDED_TO_ADDRESSES?.split(',') ?? [] // exclude specific toAdresses from statistics
+
 async function getTotalWalletAddresses() {
   const accountSet = new Set()
-  const transactions = await Transaction.find({})
+  const transactions = await Transaction.find({ toAddress: { $nin: EXCLUDED_TO_ADDRESSES } })
   for (const tx of transactions) {
     accountSet.add(tx.fromAddress)
     accountSet.add(tx.toAddress)
@@ -24,7 +26,10 @@ async function getTotalTransactionsChartData(groupBy = null) {
   queryDate.setDate(oneYearAgo)
   queryDate.setHours(0, 0, 0, 0)
 
-  const lastYearTransactions = await Transaction.find({ timestamp: { $gte: queryDate } }).exec()
+  const lastYearTransactions = await Transaction.find({
+    toAddress: { $nin: EXCLUDED_TO_ADDRESSES },
+    timestamp: { $gte: queryDate }
+  }).exec()
 
   const groupedBySelection: { [key: string]: ITransaction[] } = _.groupBy(lastYearTransactions, tx => {
     return groupBy === 'month'
@@ -50,7 +55,7 @@ export async function calculateStatistics() {
   logger.info('==== start building statistics ====')
   const totalBlocks = await Block.countDocuments({})
 
-  const totalTransactions = await Transaction.countDocuments({})
+  const totalTransactions = await Transaction.countDocuments({ toAddress: { $nin: EXCLUDED_TO_ADDRESSES } })
   const totalWalletAddresses = await getTotalWalletAddresses()
   const totalAssets = await CreateTokenEvent.countDocuments({})
 
