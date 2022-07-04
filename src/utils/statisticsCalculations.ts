@@ -2,11 +2,9 @@ import Block from '../models/block.model'
 import CreateTokenEvent from '../models/createTokenEvent.model'
 import Statistic from '../models/statistic.model'
 import Transaction from '../models/transaction.model'
-import _ from 'lodash'
-import { format, getWeek, getWeekYear } from 'date-fns'
+import { getWeek, getYear, parse } from 'date-fns'
 import { logger } from './logger'
 import { IStatistic } from 'interfaces/statistic.interface'
-import { ITransaction } from 'interfaces/transaction.interface'
 import { generateArrayOfPastMonths, generateArrayOfPastWeeks, generateArrayOfPastDays } from '../utils/util'
 
 const EXCLUDED_TO_ADDRESSES = process.env.STATISTICS_EXCLUDED_TO_ADDRESSES?.split(',') ?? [] // exclude specific toAdresses from statistics
@@ -21,52 +19,67 @@ async function getTotalWalletAddresses() {
   return accountSet.size
 }
 
-async function getTotalTransactionsChartData(groupBy = null) {
+async function getTotalTransactionsChartData(): Promise<object> {
   const queryDate = new Date()
   const oneYearAgo = queryDate.getDate() - 365 // 365 days in the past
   queryDate.setDate(oneYearAgo)
   queryDate.setHours(0, 0, 0, 0)
 
-  const lastYearTransactions = await Transaction.find({
-    toAddress: { $nin: EXCLUDED_TO_ADDRESSES },
-    timestamp: { $gte: queryDate }
-  }).exec()
+  const amountTxByDay = await Transaction.aggregate([
+    { $match: { toAddress: { $nin: EXCLUDED_TO_ADDRESSES }, timestamp: { $gte: queryDate } } },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%d.%m.%Y', date: '$timestamp' } },
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { sortDate: 1 } }
+  ])
+  const amountTxByMonth = await Transaction.aggregate([
+    { $match: { toAddress: { $nin: EXCLUDED_TO_ADDRESSES }, timestamp: { $gte: queryDate } } },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%m.%Y', date: '$timestamp' } },
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { sortDate: 1 } }
+  ])
 
-  const groupedBySelection: { [key: string]: ITransaction[] } = _.groupBy(lastYearTransactions, tx => {
-    return groupBy === 'month'
-      ? format(tx.timestamp, 'MM.yyyy')
-      : groupBy === 'week'
-      ? `${getWeek(tx.timestamp, {
-          weekStartsOn: 1
-        })}.${getWeekYear(tx.timestamp)}`
-      : format(tx.timestamp, 'dd.MM.yyyy')
-  })
+  const dateLabels = generateArrayOfPastDays(365) // dd.MM.yyyy
+  const weekLabels = generateArrayOfPastWeeks(52) // {1-52}.yyyy
+  const monthLabels = generateArrayOfPastMonths(12) // mm.yyyy
+  const completeTxsByDay = []
+  const completeTxsByWeek = []
+  const completeTxsByMonth = []
 
-  console.log('HERE!!', typeof groupedBySelection)
-
-  const timeStamps = Object.keys(groupedBySelection)
-  const overallValues = Object.values(groupedBySelection).map(group => (group ? group.length : 0))
-
-  let dateLabels: string[] = []
-  switch (groupBy) {
-    case 'month':
-      dateLabels = generateArrayOfPastMonths(12)
-      break
-    case 'week':
-      dateLabels = generateArrayOfPastWeeks(52)
-      break
-    default:
-      dateLabels = generateArrayOfPastDays(365)
-      break
+  for (const dateLabel of dateLabels) {
+    const indexMatchingDate = amountTxByDay.findIndex(day => day._id === dateLabel)
+    completeTxsByDay.push(indexMatchingDate === -1 ? 0 : amountTxByDay[indexMatchingDate].count)
+  }
+  for (const monthLabel of monthLabels) {
+    const indexMatchingMonth = amountTxByMonth.findIndex(month => month._id === monthLabel)
+    completeTxsByMonth.push(indexMatchingMonth === -1 ? 0 : amountTxByMonth[indexMatchingMonth].count)
   }
 
-  // let totalTransactionsPerDate: number[] = []
-  // for (const label of dateLabels) {
-  //   const numberOfTransactions = groupedBySelection.get(label) ?
-  //   totalTransactionsPerDate.push( groupedBySelection.get() )
-  // }
+  const txByWeekNumber = {}
+  for (const day of amountTxByDay) {
+    const date = parse(day._id, 'dd.MM.yyyy', new Date())
+    const weekNumber = getWeek(date)
+    const year = getYear(date)
+    txByWeekNumber[`${weekNumber}.${year}`] = txByWeekNumber[`${weekNumber}.${year}`]
+      ? txByWeekNumber[`${weekNumber}.${year}`] + day.count
+      : day.count
+  }
+  for (const weekLabel of weekLabels) {
+    completeTxsByWeek.push(txByWeekNumber[weekLabel] ? txByWeekNumber[weekLabel] : 0)
+  }
 
-  return { timeStamps, overallValues }
+  return {
+    groupedByDay: { timeStamps: dateLabels, overallValues: completeTxsByDay },
+    groupedByWeek: { timeStamps: weekLabels, overallValues: completeTxsByWeek },
+    groupedByMonth: { timeStamps: monthLabels, overallValues: completeTxsByMonth }
+  }
 }
 
 async function saveStatistic(statistic: IStatistic) {
@@ -81,10 +94,7 @@ export async function calculateStatistics() {
   const totalWalletAddresses = await getTotalWalletAddresses()
   const totalAssets = await CreateTokenEvent.countDocuments({})
 
-  const totalTransactionsChartData: any = {}
-  totalTransactionsChartData.groupedByDay = await getTotalTransactionsChartData()
-  totalTransactionsChartData.groupedByWeek = await getTotalTransactionsChartData('week')
-  totalTransactionsChartData.groupedByMonth = await getTotalTransactionsChartData('month')
+  const totalTransactionsChartData = await getTotalTransactionsChartData()
 
   const statistic: IStatistic = { totalBlocks, totalTransactions, totalWalletAddresses, totalAssets, totalTransactionsChartData }
   await saveStatistic(statistic)
