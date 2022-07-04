@@ -32,8 +32,7 @@ async function getTotalTransactionsChartData(): Promise<object> {
         _id: { $dateToString: { format: '%d.%m.%Y', date: '$timestamp' } },
         count: { $sum: 1 }
       }
-    },
-    { $sort: { sortDate: 1 } }
+    }
   ])
   const amountTxByMonth = await Transaction.aggregate([
     { $match: { toAddress: { $nin: EXCLUDED_TO_ADDRESSES }, timestamp: { $gte: queryDate } } },
@@ -42,8 +41,7 @@ async function getTotalTransactionsChartData(): Promise<object> {
         _id: { $dateToString: { format: '%m.%Y', date: '$timestamp' } },
         count: { $sum: 1 }
       }
-    },
-    { $sort: { sortDate: 1 } }
+    }
   ])
 
   const dateLabels = generateArrayOfPastDays(365) // dd.MM.yyyy
