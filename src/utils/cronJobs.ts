@@ -8,9 +8,9 @@ export function startCronJobs() {
   let isHealthCheckRunning = false
 
   /**
-   * try to start fetchBlockchainData every minute
+   * try to start fetchBlockchainData every 15 minutes
    */
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('2,17,32,47 * * * *', async () => {
     if (!isFetching) {
       isFetching = true
       logger.info('==== start fetchBlockchainData (cron) ====')
