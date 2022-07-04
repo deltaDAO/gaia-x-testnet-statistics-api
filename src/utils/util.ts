@@ -1,4 +1,4 @@
-import { add, differenceInMonths, differenceInCalendarWeeks, format, getWeek, getWeekYear, sub } from 'date-fns'
+import { add, differenceInMonths, differenceInCalendarWeeks, format, getWeek, getWeekYear, sub, differenceInCalendarDays } from 'date-fns'
 
 /**
  * @method isEmpty
@@ -31,7 +31,7 @@ export function getDateFromUnixTimestamp(unixTimestamp: number): Date {
 export function generateArrayOfPastMonths(numberOfMonth: number): string[] {
   const months = []
   const dateEnd = new Date()
-  let dateStart = sub(dateEnd, { months: numberOfMonth })
+  let dateStart = sub(dateEnd, { months: numberOfMonth - 1 })
 
   while (differenceInMonths(dateEnd, dateStart) >= 0) {
     months.push(format(dateStart, 'MM.yyyy'))
@@ -45,12 +45,8 @@ export function generateArrayOfPastWeeks(numberOfWeeks: number): string[] {
   const dateEnd = new Date()
   let dateStart = sub(dateEnd, { weeks: numberOfWeeks })
 
-  while (differenceInCalendarWeeks(dateEnd, dateStart) >= 0) {
-    weeks.push(
-      `${getWeek(dateStart, {
-        weekStartsOn: 1
-      })}.${getWeekYear(dateStart)}`
-    )
+  while (differenceInCalendarWeeks(dateEnd, dateStart) > 0) {
+    weeks.push(`${getWeek(dateStart)}.${getWeekYear(dateStart)}`)
     dateStart = add(dateStart, { weeks: 1 })
   }
   return weeks
@@ -59,9 +55,9 @@ export function generateArrayOfPastWeeks(numberOfWeeks: number): string[] {
 export function generateArrayOfPastDays(numberOfDays: number): string[] {
   const days = []
   const dateEnd = new Date()
-  let dateStart = sub(dateEnd, { days: numberOfDays })
+  let dateStart = sub(dateEnd, { days: numberOfDays - 1 })
 
-  while (differenceInCalendarWeeks(dateEnd, dateStart) >= 0) {
+  while (differenceInCalendarDays(dateEnd, dateStart) >= 0) {
     days.push(format(dateStart, 'dd.MM.yyyy'))
     dateStart = add(dateStart, { days: 1 })
   }
