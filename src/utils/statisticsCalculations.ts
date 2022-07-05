@@ -5,7 +5,7 @@ import Transaction from '../models/transaction.model'
 import { getWeek, getYear, parse } from 'date-fns'
 import { logger } from './logger'
 import { IStatistic } from 'interfaces/statistic.interface'
-import { generateArrayOfPastMonths, generateArrayOfPastWeeks, generateArrayOfPastDays } from '../utils/util'
+import { generateArrayOfPastMonths, generateArrayOfPastWeeks, generateArrayOfPastDays } from '.'
 
 const EXCLUDED_TO_ADDRESSES = process.env.STATISTICS_EXCLUDED_TO_ADDRESSES?.split(',') ?? [] // exclude specific toAdresses from statistics
 

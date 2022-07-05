@@ -4,7 +4,7 @@ import { ITransaction } from 'interfaces/transaction.interface'
 import Block from '../models/block.model'
 import Transaction from '../models/transaction.model'
 import { logger } from './logger'
-import { getDateFromUnixTimestamp } from './util'
+import { getDateFromUnixTimestamp } from '.'
 
 const providerURL = process.env.PROVIDER_URL || 'https://rpc.gaiaxtestnet.oceanprotocol.com' // or use your local node 'http://localhost:8545'
 const provider = new ethers.providers.JsonRpcProvider(providerURL)
