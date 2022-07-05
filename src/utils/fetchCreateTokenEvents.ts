@@ -5,7 +5,7 @@ const { abi, contractAddress } = require('./dtfactory.json')
 import CreateTokenEvent from '../models/createTokenEvent.model'
 import Block from '../models/block.model'
 import { logger } from './logger'
-import { getDateFromUnixTimestamp } from './util'
+import { getDateFromUnixTimestamp } from '.'
 import { ICreateTokenEvent } from 'interfaces/createTokenEvent.interface'
 import { IBlock } from 'interfaces/block.interface'
 import { PLACEHOLDER_TIMESTAMP } from './constants'
