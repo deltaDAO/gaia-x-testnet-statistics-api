@@ -26,7 +26,7 @@ export function startCronJobs() {
    * set FF_NOTIFY_HEALTH_SLACK to true in .env to enable
    * SLACK_WEBHOOK_SECRET_URL needed
    */
-  if (process.env.FF_NOTIFY_HEALTH_SLACK) {
+  if (process.env.FF_NOTIFY_HEALTH_SLACK === 'true') {
     if (!process.env.SLACK_WEBHOOK_SECRET_URL) logger.warn('No SLACK_WEBHOOK_SECRET_URL configured')
 
     cron.schedule('0,15,30,45 * * * *', async () => {
