@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose'
 
-import { Transaction } from '../interfaces/transaction.interface'
+import { ITransaction } from '../interfaces/transaction.interface'
 
 const transactionSchema: Schema = new Schema(
   {
@@ -37,6 +37,6 @@ const transactionSchema: Schema = new Schema(
 // Make sure there are no duplicates (each publicKey once per list)
 //transactionSchema.index({ publicKey: 1, list_id: 1 }, { unique: true })
 
-const Transaction = model<Transaction & Document>('Transaction', transactionSchema)
+const Transaction = model<ITransaction & Document>('Transaction', transactionSchema)
 
 export default Transaction

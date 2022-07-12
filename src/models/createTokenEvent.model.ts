@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose'
 
-import { CreateTokenEvent } from '../interfaces/createTokenEvent.interface'
+import { ICreateTokenEvent } from '../interfaces/createTokenEvent.interface'
 
 const createTokenEventSchema: Schema = new Schema(
   {
@@ -30,6 +30,6 @@ const createTokenEventSchema: Schema = new Schema(
 // Make sure there are no duplicates (each publicKey once per list)
 //createTokenEventSchema.index({ publicKey: 1, list_id: 1 }, { unique: true })
 
-const CreateTokenEvent = model<CreateTokenEvent & Document>('CreateTokenEvent', createTokenEventSchema)
+const CreateTokenEvent = model<ICreateTokenEvent & Document>('CreateTokenEvent', createTokenEventSchema)
 
 export default CreateTokenEvent

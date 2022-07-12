@@ -131,6 +131,7 @@ class App {
     this.app.use(errorMiddleware)
   }
 }
+
 startCronJobs()
 
 export default App

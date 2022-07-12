@@ -1,4 +1,4 @@
-export interface Block {
+export interface IBlock {
   _id?: string
   blockNumber: number
   unixTimestamp: number
