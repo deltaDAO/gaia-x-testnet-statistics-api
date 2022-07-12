@@ -29,6 +29,16 @@ spec:
                 secretKeyRef:
                   name: gx-testnet-statistics-api-secrets
                   key: SLACK_WEBHOOK
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: mongo-creds
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mongo-creds
           image: deltadao/gaia-x-testnet-statistics-api:main
           imagePullPolicy: Always
           name: gx-testnet-statistics-api
